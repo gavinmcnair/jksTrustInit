@@ -1,4 +1,4 @@
-version: 2
+version: 2.1
 
 jobs:
 
@@ -15,7 +15,7 @@ jobs:
           name: build docker image
           command: make build
 
-  publish:
+  release:
     docker:
       - image: docker:18.06.1-ce-git
     steps:
@@ -36,16 +36,21 @@ jobs:
       - run:
           name: docker logout
           command: make logout
+      - run: curl -sL https://git.io/goreleaser | bash
 
 workflows:
   version: 2
   flow:
     jobs:
-      - build
-      - publish:
+      - build:
+          filters:
+            branches:
+              ignore:
+                - main
+      - release:
           filters:
             branches:
               only:
-                - master
-          requires:
-            - build
+                - main
+            tags:
+              only: /v[0-9]+(\.[0-9]+)*(-.*)*/

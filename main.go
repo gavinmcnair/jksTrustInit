@@ -36,7 +36,7 @@ func run() error {
 		return err
 	}
 
-	var key,certificate string
+	var key, certificate string
 
 	if cfg.Mode == true {
 		key = cfg.KeyFile
