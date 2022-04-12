@@ -1,6 +1,7 @@
 # jksTrustInit
 
 ![GitHub](https://img.shields.io/github/license/gavinmcnair/jkstrustinit)
+![GitHub tag (latest by date)](https://img.shields.io/github/v/tag/gavinmcnair/jkstrustinit)
 ![CircleCI](https://img.shields.io/circleci/build/github/gavinmcnair/jksTrustInit/main?token=aab7daba901f49034a2fb9f61895b61114b13de9)
 
 
