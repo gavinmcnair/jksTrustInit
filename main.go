@@ -1,7 +1,6 @@
 package main
 
 import (
-//	"crypto/x509"
 	"encoding/pem"
 	"errors"
 	"github.com/caarlos0/env/v6"
@@ -13,13 +12,13 @@ import (
 )
 
 type config struct {
-	Password    string `env:"PASSWORD" envDefault:"password"`
-	Mode	    bool   `env:"FILE_MODE" envDefault: false`
-	Key         string `env:"KEY"`
-	Certificate string `env:"CERTIFICATE"`
-	KeyFile         string `env:"KEY_FILE,file" envDefault:"key.pem"`
-	CertificateFile string `env:"CERTIFICATE_FILE,file" envDefault:"cert.pem"`
-	OutputJKS   string `env:"OUTPUT_JKS_FILE" envDefault:""`
+	Password        string `env:"PASSWORD" envDefault:"password"`
+	Mode            bool   `env:"FILE_MODE" envDefault: false`
+	Key             string `env:"KEY"`
+	Certificate     string `env:"CERTIFICATE"`
+	KeyFile         string `env:"KEY_FILE,file"`
+	CertificateFile string `env:"CERTIFICATE_FILE,file"`
+	OutputJKS       string `env:"OUTPUT_FILE" envDefault:"/var/run/secrets/truststore.jks"`
 }
 
 func main() {
@@ -36,78 +35,52 @@ func run() error {
 	if err := env.Parse(&cfg); err != nil {
 		return err
 	}
-	password := []byte(cfg.Password)
 
-	ks1 := keystore.New()
+	var key,certificate string
 
-	privateKey, errRPK := readPem("PRIVATE KEY", cfg.KeyFile)
-	if errRPK != nil {
-		return errRPK
+	if cfg.Mode == true {
+		key = cfg.KeyFile
+		certificate = cfg.CertificateFile
+	} else {
+		key = cfg.Key
+		certificate = cfg.Certificate
 	}
 
-	certificate, errRS := readPem("CERTIFICATE", cfg.CertificateFile)
-	if errRS != nil {
-		return errRS
+	password := []byte(cfg.Password)
+
+	ks := keystore.New()
+
+	pemPrivateKey, err := readPem("PRIVATE KEY", key)
+	if err != nil {
+		return err
+	}
+
+	pemCertificate, err := readPem("CERTIFICATE", certificate)
+	if err != nil {
+		return err
 	}
 
 	pkeIn := keystore.PrivateKeyEntry{
 		CreationTime: time.Now(),
-		PrivateKey:   privateKey,
+		PrivateKey:   pemPrivateKey,
 		CertificateChain: []keystore.Certificate{
 			{
 				Type:    "X509",
-				Content: certificate,
+				Content: pemCertificate,
 			},
 		},
 	}
 
-	if errSPKE := ks1.SetPrivateKeyEntry("alias", pkeIn, password); errSPKE != nil {
-		return errSPKE
+	if err := ks.SetPrivateKeyEntry("alias", pkeIn, password); err != nil {
+		return err
 	}
 
-	if errWKS := writeKeyStore(ks1, "keystore.jks", password); errWKS != nil {
-		return errWKS
+	if err := writeKeyStore(ks, cfg.OutputJKS, password); err != nil {
+		return err
 	}
-
-	// ks2, errRKS := readKeyStore("keystore.jks", password)
-	// if errRKS != nil {
-	// 	return errRKS
-	// }
-
-	// pkeOut, errGPKE := ks2.GetPrivateKeyEntry("alias", password)
-	// if errGPKE != nil {
-	// 	return errGPKE
-	// }
-
-	// _, errPK := x509.ParsePKCS8PrivateKey(pkeOut.PrivateKey)
-	// if errPK != nil {
-	// 	return errPK
-	// }
 
 	return nil
 }
-
-// func readKeyStore(filename string, password []byte) (keystore.KeyStore, error) {
-
-// 	ks := keystore.New()
-
-// 	f, err := os.Open(filename)
-// 	if err != nil {
-// 		return ks, err
-// 	}
-
-// 	defer func() {
-// 		if err := f.Close(); err != nil {
-// 			return
-// 		}
-// 	}()
-
-// 	if err := ks.Load(f, password); err != nil {
-// 		return ks, err
-// 	}
-
-// 	return ks, nil
-// }
 
 func writeKeyStore(ks keystore.KeyStore, filename string, password []byte) error {
 	f, err := os.Create(filename)
@@ -115,16 +88,12 @@ func writeKeyStore(ks keystore.KeyStore, filename string, password []byte) error
 		return err
 	}
 
-	defer func() {
-		if err := f.Close(); err != nil {
-			return
-		}
-	}()
-
-	err = ks.Store(f, password)
-	if err != nil {
+	if err = ks.Store(f, password); err != nil {
+		f.Close()
 		return err
 	}
+
+	f.Close()
 	return nil
 }
 
