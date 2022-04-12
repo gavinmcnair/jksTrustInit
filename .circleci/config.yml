@@ -23,7 +23,7 @@ jobs:
       - setup_remote_docker
       - run:
           name: install dependencies
-          command: apk add --update alpine-sdk
+          command: apk add --update alpine-sdk bash
       - run:
           name: docker login
           command: make login
