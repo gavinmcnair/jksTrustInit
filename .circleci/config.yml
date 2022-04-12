@@ -17,25 +17,13 @@ jobs:
 
   release:
     docker:
-      - image: docker:18.06.1-ce-git
+      - image: circleci/golang:1.15
     steps:
       - checkout
       - setup_remote_docker
       - run:
-          name: install dependencies
-          command: apk add --update alpine-sdk bash
-      - run:
-          name: docker login
+          name: login
           command: make login
-      - run:
-          name: build docker image
-          command: make build
-      - run:
-          name: push image to docker.io
-          command: make push-image
-      - run:
-          name: docker logout
-          command: make logout
       - run: curl -sL https://git.io/goreleaser | bash
 
 workflows:
