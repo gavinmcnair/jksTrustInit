@@ -1,6 +1,7 @@
 # jksTrustInit
 
 ![GitHub](https://img.shields.io/github/license/gavinmcnair/jkstrustinit)
+[![Powered By: GoReleaser](https://img.shields.io/badge/powered%20by-goreleaser-green.svg)](https://github.com/goreleaser)
 ![GitHub tag (latest by date)](https://img.shields.io/github/v/tag/gavinmcnair/jkstrustinit)
 ![CircleCI](https://img.shields.io/circleci/build/github/gavinmcnair/jksTrustInit/main?token=aab7daba901f49034a2fb9f61895b61114b13de9)
 
@@ -39,7 +40,7 @@ metadata:
 spec:
   initContainers:
     - name: jksTrustInit
-      image: gavinmcnair/jksTrustInit:1.0.0
+      image: gavinmcnair/jkstrustinit:v1.0.4
       env:
         - name: KEY
           value: "pem encoded key"
