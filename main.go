@@ -13,7 +13,7 @@ import (
 
 type config struct {
 	Password        string `env:"PASSWORD" envDefault:"password"`
-	Mode            bool   `env:"FILE_MODE" envDefault: false`
+	Mode            bool   `env:"FILE_MODE" envDefault: "false"`
 	Key             string `env:"KEY"`
 	Certificate     string `env:"CERTIFICATE"`
 	KeyFile         string `env:"KEY_FILE,file"`
