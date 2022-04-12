@@ -36,22 +36,17 @@ fmt: ## Run go fmt against code
 	$(GOFMT) -w main.go
 	$(GOCMD) fmt *.go
 
-.PHONY: vet
-vet: ## Run go vet against code
-	$(GOCMD) vet main.go
-	$(GOCMD) vet .
-
 .PHONY: test
-test: fmt vet ## Run tests
+test: fmt ## Run tests
 	$(GOCMD) test . -coverprofile cover.out
 
 .PHONY: jkstrustinit
-jkstrustinit: fmt vet
+jkstrustinit: fmt
 	env CGO_ENABLED=0 GOOS=linux GOARCH=amd64 $(GOCMD) build -o $(BIN)/linux/$(PROJNAME) $(GIT_REPO)
 	env GOOS=darwin GOARCH=amd64 $(GOCMD) build -o $(BIN)/darwin/$(PROJNAME) $(GIT_REPO)
 
 .PHONY: jkstrustinit-linux
-jkstrustinit-linux: fmt vet
+jkstrustinit-linux: fmt
 	env CGO_ENABLED=0 GOOS=linux GOARCH=amd64 $(GOCMD) build -o $(BIN)/linux/$(PROJNAME) $(GIT_REPO)
 
 #------------------------------------------------------------------
