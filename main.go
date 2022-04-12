@@ -3,7 +3,7 @@ package main
 import (
 	"encoding/pem"
 	"errors"
-	"github.com/caarlos0/env/v6"
+	"github.com/:/env/v6"
 	"github.com/pavel-v-chernykh/keystore-go/v4"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
@@ -13,7 +13,7 @@ import (
 
 type config struct {
 	Password        string `env:"PASSWORD" envDefault:"password"`
-	Mode            bool   `env:"FILE_MODE" envDefault: "false"`
+	Mode            bool   `env:"FILE_MODE" envDefault:false`
 	Key             string `env:"KEY"`
 	Certificate     string `env:"CERTIFICATE"`
 	KeyFile         string `env:"KEY_FILE,file"`
