@@ -1,4 +1,4 @@
-module github.com/gavinmcnair/jksTrustInit
+module github.com/gavinmcnair/jkstrustinit
 
 go 1.17
 
