@@ -8,9 +8,9 @@
 
 ## Problem statement
 
-Have you got a Java application which needs to deliver a `JKS` file but you only have a standard pem encoded Key and Certificate?
+Do you have a Java application which uses a `JKS` file but you only have a standard pem encoded Key and Certificate?
 
-jksTrustInit is an `initContainer` which takes creds from either local files or environment variables and writes out a Java Keystore (JKS) file to an emptyDir which can be shared with the main container
+jksTrustInit is an `initContainer` which takes certificates from either local files or environment variables and writes out a Java Keystore (JKS) file to an emptyDir which can be shared with the main container
 
 | Environment Variable  | Default  | Description  |
 |---|---|---|
@@ -68,6 +68,10 @@ spec:
 
 ## Motivation
 
-To do this in the conventional way you need to use an insecure Java container which is large and execute multiple java keystore commands. This container is a single binary on a scratch container.
+In the conventional way we need to use an insecure Java container which often contains an entire Linux operating system. 
+
+This already large insecure container then has to execute multiple java keystore commands.
+
+In comparison this container is a single binary build upon a scratch container. Its much smaller and has far less security implications.
 
 It should be both quick and reliable.
